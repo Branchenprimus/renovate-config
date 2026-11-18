@@ -1,0 +1,69 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Shared Renovate policy for Branchenprimus apps",
+  "extends": [
+    "config:recommended",
+    "docker:pinDigests",
+    "helpers:pinGitHubActionDigests",
+    "group:allNonMajor"
+  ],
+  "timezone": "Europe/Berlin",
+  "schedule": ["before 6am on monday"],
+  "dependencyDashboard": {
+    "enabled": true
+  },
+  "automerge": false,
+  "prConcurrentLimit": 3,
+  "prHourlyLimit": 0,
+  "labels": ["dependencies"],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on the first day of the month"]
+  },
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "schedule": ["at any time"],
+    "labels": ["dependencies", "security"]
+  },
+  "packageRules": [
+    {
+      "description": "Majors always get their own PR for manual review",
+      "matchUpdateTypes": ["major"],
+      "labels": ["dependencies", "major"]
+    },
+    {
+      "description": "Language runtime upgrades can break apps: keep them out of the routine group",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["python", "docker.io/library/python"],
+      "matchUpdateTypes": ["minor", "major"],
+      "groupName": "Python runtime"
+    },
+    {
+      "description": "Language runtime upgrades can break apps: keep them out of the routine group",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["node", "docker.io/library/node"],
+      "matchUpdateTypes": ["minor", "major"],
+      "groupName": "Node.js runtime"
+    },
+    {
+      "description": "Language runtime upgrades can break apps: keep them out of the routine group",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["golang", "docker.io/library/golang"],
+      "matchUpdateTypes": ["minor", "major"],
+      "groupName": "Go toolchain"
+    },
+    {
+      "description": "Stateful services: majors need data migration (PostgreSQL dump/restore, Nextcloud one major at a time). Only on explicit approval in the Dependency Dashboard.",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["postgres", "docker.io/library/postgres", "nextcloud", "docker.io/library/nextcloud"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Own app images are released by tag via each app's release workflow, not by Renovate",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/branchenprimus/**"],
+      "enabled": false
+    }
+  ]
+}
