@@ -37,3 +37,7 @@ Merging a Renovate PR does not deploy anything. App releases still start with a
 
 Renovate runs as the Mend Renovate GitHub App. It must be installed for this
 repository and every repository that extends it.
+
+The Mend app installs in silent mode (no issues or PRs, approvals only in the
+Mend portal). `"mode": "full"` overrides that for every repository extending
+this preset.
